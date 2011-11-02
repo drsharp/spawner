@@ -1,6 +1,6 @@
-# Spawn
+# Spawner
 
-This plugin provides a 'spawn' method to easily fork OR thread long-running sections of
+This plugin provides a 'spawner' method to easily fork OR thread long-running sections of
 code so that your application can return results to your users more quickly.
 This plugin works by creating new database connections in ActiveRecord::Base for the
 spawned block.
@@ -12,24 +12,24 @@ threads (see lib/patches.rb).
 
 To install the plugin from the master branch (recommended).
 
-    script/plugin install git://github.com/tra/spawn.git
+    script/plugin install git://github.com/drsharp/spawner.git
 
 If you want to install the plugin from the 'edge' branch (latest development):
 
-    script/plugin install git://github.com/tra/spawn.git -r edge
+    script/plugin install git://github.com/drsharp/spawner.git -r edge
 
 If you are unfortunate enough to be stuck on Rails 1.x, then it is recommended you
 stick with v1.0 of this plugin (Rails 1.x won't be supported in future versions but
 it might still work if you're lucky).   To install this version:
 
-    script/plugin install git://github.com/tra/spawn.git -r master:v1.0
+    script/plugin install git://github.com/drsharp/spawner.git -r master:v1.0
 
 ## Usage
 
 Here's a simple example of how to demonstrate the spawn plugin.
 In one of your controllers, insert this code (after installing the plugin of course):
 
-    spawn do
+    spawner do
        logger.info("I feel sleepy...")
        sleep 11
        logger.info("Time to wake up!")
@@ -39,20 +39,20 @@ If everything is working correctly, your controller should finish quickly then y
 the last log message several seconds later.
 
 If you need to wait for the spawned processes/threads, then pass the objects returned by
-spawn to Spawn::wait(), like this:
+spawner to Spawner::wait(), like this:
 
     N.times do |i|
       # spawn N blocks of code
-      spawn_ids[i] = spawn do
+      spawner_ids[i] = spawner do
         something(i)
       end
     end
     # wait for all N blocks of code to finish running
-    wait(spawn_ids)
+    wait(spawner_ids)
 
 ## Options
 
-The options you can pass to spawn are:
+The options you can pass to spawner are:
 
 <table>
   <tr><th>Option</th><th>Values</th></tr>
@@ -63,11 +63,11 @@ The options you can pass to spawn are:
   <tr><td>:argv</td><td>string to override the process name</td></tr>
 </table>
 
-Any option to spawn can be set as a default so that you don't have to pass them in
-to every call of spawn.   To configure the spawn default options, add a line to
+Any option to spawner can be set as a default so that you don't have to pass them in
+to every call of spawn.   To configure the spawner default options, add a line to
 your configuration file(s) like this: 
 
-    Spawn::default_options {:method => :thread}
+    Spawner::default_options {:method => :thread}
 
 If you don't set any default options, the :method will default to :fork.  To
 specify different values for different environments, add the default_options call to
@@ -75,9 +75,9 @@ he appropriate environment file (development.rb, test.rb).   For testing you can
 the default :method to :yield so that the code is run inline.
 
     # in environment.rb
-    Spawn::method :method => :fork, :nice => 7
+    Spawner::method :method => :fork, :nice => 7
     # in test.rb, will override the environment.rb setting
-    Spawn::method :method => :yield
+    Spawner::method :method => :yield
 
 This allows you to set your production and development environments to use different
 methods according to your needs.
@@ -87,22 +87,22 @@ methods according to your needs.
 If you want your forked child to run at a lower priority than the parent process, pass in
 the :nice option like this:
 
-    spawn(:nice => 7) do
+    spawner(:nice => 7) do
       do_something_nicely
     end
 
 ### fork me
 
-By default, spawn will use the fork to spawn child processes.  You can configure it to
+By default, spawner will use the fork to spawn child processes.  You can configure it to
 do threading either by telling the spawn method when you call it or by configuring your
 environment.
 For example, this is how you can tell spawn to use threading on the call,
 
-    spawn(:method => :thread) do
+    spawner(:method => :thread) do
       something
     end
   
-For older versions of Rails (1.x), when using the :thread setting, spawn will check to
+For older versions of Rails (1.x), when using the :thread setting, spawner will check to
 make sure that you have set allow_concurrency=true in your configuration.   If you
 want this setting then put this line in one of your environment config files: 
 
@@ -113,7 +113,7 @@ If it is not set, then spawn will raise an exception.
 ### kill or be killed
 
 Depending on your application, you may want the children processes to go away when
-the parent  process exits.   By default spawn lets the children live after the
+the parent  process exits.   By default spawner lets the children live after the
 parent dies.   But you can tell it to kill the children by setting the :kill option
 to true.
 
@@ -127,17 +127,17 @@ listing the running processes (ps).
 For example, if you do something like this,
 
     3.times do |i|
-      spawn(:argv => "spawn -#{i}-") do
+      spawner(:argv => "spawner -#{i}-") do
         something(i)
       end
     end
 
 then in the shell,
 
-    $ ps -ef | grep spawn
-    502  2645  2642   0   0:00.01 ttys002    0:00.02 spawn -0-
-    502  2646  2642   0   0:00.02 ttys002    0:00.02 spawn -1-
-    502  2647  2642   0   0:00.02 ttys002    0:00.03 spawn -2-
+    $ ps -ef | grep spawner
+    502  2645  2642   0   0:00.01 ttys002    0:00.02 spawner -0-
+    502  2646  2642   0   0:00.02 ttys002    0:00.02 spawner -1-
+    502  2647  2642   0   0:00.02 ttys002    0:00.03 spawner -2-
 
 The length of the process name may be limited by your OS so you might want to experiment
 to see how long it can be (it may be limited by the length of the original process name).
