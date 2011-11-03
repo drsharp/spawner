@@ -1,11 +1,20 @@
 # Spawner
 
+## Dan's Note
+------------------------------
+
+I forked this from Tra's spawn project because it felt like a rename was a better
+approach to dealing with the problems of Ruby 1.9 name collision. Also, "spawner"
+as a name made more sense. A spawner spawns... like a driver drives.
+
+------------------------------
+
 This plugin provides a 'spawner' method to easily fork OR thread long-running sections of
 code so that your application can return results to your users more quickly.
 This plugin works by creating new database connections in ActiveRecord::Base for the
 spawned block.
 
-The plugin also patches ActiveRecord::Base to handle some known bugs when using 
+The plugin also patches ActiveRecord::Base to handle some known bugs when using
 threads (see lib/patches.rb).
 
 ## Installation
@@ -65,7 +74,7 @@ The options you can pass to spawner are:
 
 Any option to spawner can be set as a default so that you don't have to pass them in
 to every call of spawn.   To configure the spawner default options, add a line to
-your configuration file(s) like this: 
+your configuration file(s) like this:
 
     Spawner::default_options {:method => :thread}
 
@@ -101,10 +110,10 @@ For example, this is how you can tell spawn to use threading on the call,
     spawner(:method => :thread) do
       something
     end
-  
+
 For older versions of Rails (1.x), when using the :thread setting, spawner will check to
 make sure that you have set allow_concurrency=true in your configuration.   If you
-want this setting then put this line in one of your environment config files: 
+want this setting then put this line in one of your environment config files:
 
     config.active_record.allow_concurrency = true
 
@@ -162,7 +171,7 @@ Forking advantages:
   mode (config.cache_classes = false).
 
 Threading advantages:
-- less filling - threads take less resources... how much less?  it depends.   Some 
+- less filling - threads take less resources... how much less?  it depends.   Some
   flavors of Unix are pretty efficient at forking so the threading advantage may not
   be as big as you think... but then again, maybe it's more than you think.  ;-)
 - debugging - you can set breakpoints in your threads
@@ -176,7 +185,7 @@ in rails for background processing.
 Further inspiration for the threading implementation came from Jonathon Rochkind's
 blog post on threading in rails.
     http://bibwild.wordpress.com/2007/08/28/threading-in-rails/
-    
+
 Also thanks to all who have helped debug problems and suggest improvements
 including:
 
