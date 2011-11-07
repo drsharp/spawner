@@ -1,5 +1,5 @@
 require 'patches'
 
-ActiveRecord::Base.send :include, Spawn
-ActionController::Base.send :include, Spawn
-ActiveRecord::Observer.send :include, Spawn
+ActiveRecord::Base.send :include, Spawner
+ActionController::Base.send :include, Spawner
+ActiveRecord::Observer.send :include, Spawner

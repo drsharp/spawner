@@ -53,3 +53,7 @@ v0.9 - 2008/05/11
 --------------------------------------------------
 v1.0 - 2010/10/09
 * merged edged to master, let's call this version 1.0
+
+--------------------------------------------------
+v1.1 - 2011/11/03
+* Forked from tra. Renamed to Spawner. Starting to clean up

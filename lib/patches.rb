@@ -1,8 +1,8 @@
 # see activerecord/lib/active_record/connection_adaptors/abstract/connection_specification.rb
 class ActiveRecord::Base
   # reconnect without disconnecting
-  if Spawn::RAILS_2_2
-    def self.spawn_reconnect(klass=self)
+  if Spawner::RAILS_2_2
+    def self.spawner_reconnect(klass=self)
       # keep ancestors' connection_handlers around to avoid them being garbage collected in the forked child
       @@ancestor_connection_handlers ||= []
       @@ancestor_connection_handlers << self.connection_handler
@@ -11,7 +11,7 @@ class ActiveRecord::Base
       establish_connection
     end
   else
-    def self.spawn_reconnect(klass=self)
+    def self.spawner_reconnect(klass=self)
       spec = @@defined_connections[klass.name]
       konn = active_connections[klass.name]
       # remove from internal arrays before calling establish_connection so that
@@ -23,7 +23,7 @@ class ActiveRecord::Base
   end
 
   # this patch not needed on Rails 2.x and later
-  if Spawn::RAILS_1_x
+  if Spawner::RAILS_1_x
     # monkey patch to fix threading problems,
     # see: http://dev.rubyonrails.org/ticket/7579
     def self.clear_reloadable_connections!
@@ -56,10 +56,10 @@ end
 if defined? Mongrel::HttpServer
   class Mongrel::HttpServer
     # redefine Montrel::HttpServer::process_client so that we can intercept
-    # the socket that is being used so Spawn can close it upon forking
+    # the socket that is being used so Spawner can close it upon forking
     alias_method :orig_process_client, :process_client
     def process_client(client)
-      Spawn.resources_to_close(client, @socket)
+      Spawner.resources_to_close(client, @socket)
       orig_process_client(client)
     end
   end
@@ -79,7 +79,7 @@ if need_passenger_patch
     class Passenger::Railz::RequestHandler
       alias_method :orig_process_request, :process_request
       def process_request(headers, input, output)
-        Spawn.resources_to_close(input, output)
+        Spawner.resources_to_close(input, output)
         orig_process_request(headers, input, output)
       end
     end
@@ -90,7 +90,7 @@ if need_passenger_patch
     class PhusionPassenger::Railz::RequestHandler
       alias_method :orig_process_request, :process_request
       def process_request(headers, input, output)
-        Spawn.resources_to_close(input, output)
+        Spawner.resources_to_close(input, output)
         orig_process_request(headers, input, output)
       end
     end
@@ -101,7 +101,7 @@ if need_passenger_patch
     class PhusionPassenger::Rack::RequestHandler
       alias_method :orig_process_request, :process_request
       def process_request(headers, input, output)
-        Spawn.resources_to_close(input, output)
+        Spawner.resources_to_close(input, output)
         orig_process_request(headers, input, output)
       end
     end
