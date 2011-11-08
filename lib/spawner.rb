@@ -1,7 +1,4 @@
 module Spawner
-  RAILS_1_x = (::Rails::VERSION::MAJOR == 1) unless defined?(RAILS_1_x)
-  RAILS_2_2 = (::Rails::VERSION::MAJOR > 2 || (::Rails::VERSION::MAJOR == 2 && ::Rails::VERSION::MINOR >= 2)) unless defined?(RAILS_2_2)
-
   @@default_options = {
     # default to forking (unless windows or jruby)
     :method => ((RUBY_PLATFORM =~ /(win32|java)/) ? :thread : :fork),
@@ -31,18 +28,6 @@ module Spawner
   def self.default_options(options = {})
     @@default_options.merge!(options)
     @@logger.info "spawner> default options = #{options.inspect}"
-  end
-
-  # @deprecated - please use Spawner::default_options(:method => ) instead
-  # add calls to this in your environment.rb to set your configuration, for example,
-  # to use forking everywhere except your 'development' environment:
-  #   Spawner::method :fork
-  #   Spawner::method :thread, 'development'
-  def self.method(method, env = nil)
-    @@logger.warn "spawner> please use Spawner::default_options(:method => #{method}) instead of Spawner::method"
-    if !env || env == RAILS_ENV
-      default_options :method => method
-    end
   end
 
   # set the resources to disconnect from in the child process (when forking)
@@ -93,14 +78,8 @@ module Spawner
     # setting options[:method] will override configured value in default_options[:method]
     if options[:method] == :yield
       yield
-    elsif options[:method] == :thread
-      # for versions before 2.2, check for allow_concurrency
-      if RAILS_2_2 || ActiveRecord::Base.allow_concurrency
-        thread_it(options) { yield }
-      else
-        @@logger.error("spawner(:method=>:thread) only allowed when allow_concurrency=true")
-        raise "spawner requires config.active_record.allow_concurrency=true when used with :method=>:thread"
-      end
+    elsif options[:method] == :thread || (options[:method] == nil && @@method == :thread)
+      thread_it(options) { yield }
     else
       fork_it(options) { yield }
     end
@@ -151,7 +130,8 @@ module Spawner
         # disconnect from the listening socket, et al
         Spawner.close_resources
         # get a new connection so the parent can keep the original one
-        ActiveRecord::Base.spawner_reconnect
+        ActiveRecord::Base.connection.reconnect!
+        # ActiveRecord::Base.spawner_reconnect
 
         # set the process name
         $0 = options[:argv] if options[:argv]
@@ -164,12 +144,7 @@ module Spawner
       ensure
         begin
           # to be safe, catch errors on closing the connnections too
-          if RAILS_2_2
-            ActiveRecord::Base.connection_handler.clear_all_connections!
-          else
-            ActiveRecord::Base.connection.disconnect!
-            ActiveRecord::Base.remove_connection
-          end
+          ActiveRecord::Base.connection_handler.clear_all_connections!
         ensure
           @@logger.info "spawner> child[#{Process.pid}] took #{Time.now - start} sec"
           # ensure log is flushed since we are using exit!
@@ -209,3 +184,8 @@ module Spawner
   end
 
 end
+
+
+ActiveRecord::Base.send     :include, Spawner
+ActionController::Base.send :include, Spawner
+ActiveRecord::Observer.send :include, Spawner

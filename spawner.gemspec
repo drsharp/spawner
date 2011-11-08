@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 # encoding: utf-8
 require File.expand_path('../lib/version', __FILE__)
 
@@ -9,6 +10,7 @@ Gem::Specification.new do |gem|
   gem.authors = ['Dan Sharp']
   gem.email = ['drsharp@sharpdesigns.com']
   gem.homepage = 'http://github.com/drsharp/spawner'
+  gem.date = '2011-11-08'
 
   gem.files = `git ls-files`.split("\n")
   gem.require_paths = ['lib']

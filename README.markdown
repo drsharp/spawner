@@ -7,6 +7,11 @@ I forked this from Tra's spawn project because it felt like a rename was a bette
 approach to dealing with the problems of Ruby 1.9 name collision. Also, "spawner"
 as a name made more sense. A spawner spawns... like a driver drives.
 
+I also incorporated some of the cleanup that rfc2822 included:
+https://github.com/rfc2822/spawn
+
+I just didn't like "spawn_block". I liked the idea of calling it a Spawner.
+
 ------------------------------
 
 This plugin provides a 'spawner' method to easily fork OR thread long-running sections of
