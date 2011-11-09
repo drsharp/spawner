@@ -25,26 +25,21 @@ threads (see lib/patches.rb).
 
 ## Installation
 
-To install the plugin from the master branch (recommended).
+To install this gem (Rails 3+) from the master branch (recommended), add
+the following line to your Gemfile:
 
-    script/plugin install git://github.com/drsharp/spawner.git
+     gem "spawner", :git => 'git://github.com/drsharp/spawner.git'
 
-If you want to install the plugin from the 'edge' branch (latest development):
+If you want to install the gem from the 'edge' branch (latest development):
 
-    script/plugin install git://github.com/drsharp/spawner.git -r edge
-
-If you are unfortunate enough to be stuck on Rails 1.x, then it is recommended you
-stick with v1.0 of this plugin (Rails 1.x won't be supported in future versions but
-it might still work if you're lucky).   To install this version:
-
-    script/plugin install git://github.com/drsharp/spawner.git -r master:v1.0
+    gem "spawner", :git => 'git://github.com/drsharp/spawner.git', :branch => :edge
 
 ## Usage
 
 Here's a simple example of how to demonstrate the spawn plugin.
 In one of your controllers, insert this code (after installing the plugin of course):
 
-    Spawner.spawn do
+    spawner do
        logger.info("I feel sleepy...")
        sleep 11
        logger.info("Time to wake up!")
@@ -58,7 +53,7 @@ spawner to Spawner::wait(), like this:
 
     N.times do |i|
       # spawn N blocks of code
-      spawner_ids[i] = Spawner.spawn do
+      spawner_ids[i] = spawner do
         something(i)
       end
     end
