@@ -73,7 +73,7 @@ module Spawner
   # By default the process will be a forked process.   To use threading, pass
   # :method => :thread or override the default behavior in the environment by setting
   # 'Spawner::method :thread'.
-  def spawner(opts = {})
+  def self.spawn(opts = {})
     options = @@default_options.merge(opts.symbolize_keys)
     # setting options[:method] will override configured value in default_options[:method]
     if options[:method] == :yield

@@ -44,7 +44,7 @@ it might still work if you're lucky).   To install this version:
 Here's a simple example of how to demonstrate the spawn plugin.
 In one of your controllers, insert this code (after installing the plugin of course):
 
-    spawner do
+    Spawner.spawn do
        logger.info("I feel sleepy...")
        sleep 11
        logger.info("Time to wake up!")
@@ -58,7 +58,7 @@ spawner to Spawner::wait(), like this:
 
     N.times do |i|
       # spawn N blocks of code
-      spawner_ids[i] = spawner do
+      spawner_ids[i] = Spawner.spawn do
         something(i)
       end
     end
