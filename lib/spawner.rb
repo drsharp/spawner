@@ -112,7 +112,7 @@ module Spawner
   end
 
   protected
-  def slef.fork_it(options)
+  def self.fork_it(options)
     # The problem with rails is that it only has one connection (per class),
     # so when we fork a new process, we need to reconnect.
     @@logger.debug "spawner> parent PID = #{Process.pid}"
