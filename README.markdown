@@ -7,7 +7,7 @@ I forked this from Tra's spawn project because it felt like a rename was a bette
 approach to dealing with the problems of Ruby 1.9 name collision. Also, "spawner"
 as a name made more sense. A spawner spawns... like a driver drives.
 
-*NOTE: I've also added an alias so Spawner.run will work the same as Spawner.spawn*
+### _NOTE: I've also added an alias so Spawner.run will work the same as Spawner.spawn_
 
 I also incorporated some of the cleanup that rfc2822 included: https://github.com/rfc2822/spawn
 I just didn't like "spawn_block". I liked the idea of calling it a Spawner.
@@ -17,13 +17,12 @@ as a gem, and how to incorporate it into a Rails project.
 
 ------------------------------
 
-This plugin provides a 'Spawner.spawn' method to easily fork OR thread long-running sections of
+This plugin provides a *Spawner.spawn* method to easily fork OR thread long-running sections of
 code so that your application can return results to your users more quickly.
 This plugin works by creating new database connections in ActiveRecord::Base for the
 spawned block.
 
-<strike>The plugin also patches ActiveRecord::Base to handle some known bugs when using
-threads (see lib/patches.rb).</strike> (I merged/removed these. D#)
+~~The plugin also patches ActiveRecord::Base to handle some known bugs when using threads (see lib/patches.rb).~~ _(I merged/removed these. D#)_
 
 ## Installation
 
@@ -49,6 +48,13 @@ In one of your controllers, insert this code (after installing the plugin of cou
        sleep 11
        logger.info("Time to wake up!")
      end
+
+You can also use the aliased method run():
+
+     Spawner.run do
+       ...
+     end
+
 
 If everything is working correctly, your controller should finish quickly then you'll see
 the last log message several seconds later.
