@@ -22,7 +22,7 @@ code so that your application can return results to your users more quickly.
 This plugin works by creating new database connections in ActiveRecord::Base for the
 spawned block.
 
-~~The plugin also patches ActiveRecord::Base to handle some known bugs when using threads (see lib/patches.rb).~~ _(I merged/removed these. D#)_
+_(lib/patches.rb has been merged functionally and thus removed. D#)_
 
 ## Installation
 
