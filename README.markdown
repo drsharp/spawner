@@ -7,6 +7,8 @@ I forked this from Tra's spawn project because it felt like a rename was a bette
 approach to dealing with the problems of Ruby 1.9 name collision. Also, "spawner"
 as a name made more sense. A spawner spawns... like a driver drives.
 
+*NOTE: I've also added an alias so Spawner.run will work the same as Spawner.spawn*
+
 I also incorporated some of the cleanup that rfc2822 included: https://github.com/rfc2822/spawn
 I just didn't like "spawn_block". I liked the idea of calling it a Spawner.
 
@@ -15,13 +17,13 @@ as a gem, and how to incorporate it into a Rails project.
 
 ------------------------------
 
-This plugin provides a 'spawner' method to easily fork OR thread long-running sections of
+This plugin provides a 'Spawner.spawn' method to easily fork OR thread long-running sections of
 code so that your application can return results to your users more quickly.
 This plugin works by creating new database connections in ActiveRecord::Base for the
 spawned block.
 
-The plugin also patches ActiveRecord::Base to handle some known bugs when using
-threads (see lib/patches.rb).
+<strike>The plugin also patches ActiveRecord::Base to handle some known bugs when using
+threads (see lib/patches.rb).</strike> (I merged/removed these. D#)
 
 ## Installation
 
@@ -36,10 +38,13 @@ If you want to install the gem from the 'edge' branch (latest development):
 
 ## Usage
 
-Here's a simple example of how to demonstrate the spawn plugin.
+_You now call it with explicit Module prefixing for all methods!_
+(this keeps it clear, explicit, and avoids method space clutter/collision)
+
+Here's a simple example of how to demonstrate the spawner plugin.
 In one of your controllers, insert this code (after installing the plugin of course):
 
-    spawner do
+     Spawner.spawn do
        logger.info("I feel sleepy...")
        sleep 11
        logger.info("Time to wake up!")
@@ -49,16 +54,17 @@ If everything is working correctly, your controller should finish quickly then y
 the last log message several seconds later.
 
 If you need to wait for the spawned processes/threads, then pass the objects returned by
-spawner to Spawner::wait(), like this:
+spawner to wait(), like this:
 
-    N.times do |i|
-      # spawn N blocks of code
-      spawner_ids[i] = spawner do
+    spawner_ids = []
+    10.times do |i|
+      # spawn 10 blocks of code
+      spawner_ids[i] = Spawner.spawn do
         something(i)
       end
     end
     # wait for all N blocks of code to finish running
-    wait(spawner_ids)
+    Spawner.wait(spawner_ids)
 
 ## Options
 
@@ -97,7 +103,7 @@ methods according to your needs.
 If you want your forked child to run at a lower priority than the parent process, pass in
 the :nice option like this:
 
-    spawner(:nice => 7) do
+    Spawner.spawn(:nice => 7) do
       do_something_nicely
     end
 
@@ -108,7 +114,7 @@ do threading either by telling the spawn method when you call it or by configuri
 environment.
 For example, this is how you can tell spawn to use threading on the call,
 
-    spawner(:method => :thread) do
+    Spawner.spawn(:method => :thread) do
       something
     end
 
@@ -137,7 +143,7 @@ listing the running processes (ps).
 For example, if you do something like this,
 
     3.times do |i|
-      spawner(:argv => "spawner -#{i}-") do
+      Spawner.spawn(:argv => "spawner -#{i}-") do
         something(i)
       end
     end
