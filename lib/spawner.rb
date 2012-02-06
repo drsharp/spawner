@@ -1,4 +1,11 @@
 module Spawner
+# Spawner::run do
+  # class << self
+    # def Spawner.run(opts = {})
+    #   spawner(opts)
+    # end
+  # end
+
   @@default_options = {
     # default to forking (unless windows or jruby)
     :method => ((RUBY_PLATFORM =~ /(win32|java)/) ? :thread : :fork),
@@ -73,7 +80,8 @@ module Spawner
   # By default the process will be a forked process.   To use threading, pass
   # :method => :thread or override the default behavior in the environment by setting
   # 'Spawner::method :thread'.
-  def spawner(opts = {})
+  # def spawner(opts = {})
+  def self.run(opts = {}) # spawner
     options = @@default_options.merge(opts.symbolize_keys)
     # setting options[:method] will override configured value in default_options[:method]
     if options[:method] == :yield
@@ -85,7 +93,7 @@ module Spawner
     end
   end
 
-  def wait(sids = [])
+  def self.wait(sids = [])
     # wait for all threads and/or forks (if a single sid passed in, convert to array first)
     Array(sids).each do |sid|
       if sid.type == :thread
@@ -172,7 +180,7 @@ module Spawner
     return SpawnerId.new(:fork, child)
   end
 
-  def thread_it(options)
+  def self.thread_it(options)
     # clean up stale connections from previous threads
     ActiveRecord::Base.verify_active_connections!()
     thr = Thread.new do
@@ -181,6 +189,11 @@ module Spawner
     end
     thr.priority = -options[:nice] if options[:nice]
     return SpawnerId.new(:thread, thr)
+  end
+
+  # set up Spawner.spawn as an alias for Spawner.run
+  class << Spawner
+    alias spawn run
   end
 
 end
