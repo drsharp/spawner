@@ -164,6 +164,14 @@ then in the shell,
 The length of the process name may be limited by your OS so you might want to experiment
 to see how long it can be (it may be limited by the length of the original process name).
 
+## Running the tests
+
+Make sure you install *rspec 2* or greater. Then, it's simply a matter of a command like the following:
+
+    rspec spec/spawner_integration_spec.rb  --color --format=documentation
+
+_Of course, this assumes you've git cloned this repo and are in the *spawner/* directory._
+
 ## Forking vs. Threading
 
 There are several tradeoffs for using threading vs. forking.   Forking was chosen as the
