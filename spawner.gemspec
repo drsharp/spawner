@@ -14,6 +14,6 @@ Gem::Specification.new do |gem|
 
   gem.files = `git ls-files`.split("\n")
   gem.require_paths = ['lib']
-  gem.required_rubygems_version = Gem::Requirement.new('>= 0.0.1') if gem.respond_to? :required_rubygems_version=
+  gem.required_rubygems_version = Gem::Requirement.new('>= 1.0.0') if gem.respond_to? :required_rubygems_version=
   gem.test_files = `git ls-files -- {test,spec,features}/*`.split("\n")
 end
