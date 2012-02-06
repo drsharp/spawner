@@ -57,3 +57,12 @@ v1.0 - 2010/10/09
 --------------------------------------------------
 v1.1 - 2011/11/03
 * Forked from tra. Renamed to Spawner. Starting to clean up
+
+--------------------------------------------------
+v2.0.0 - 2012/02/06
+* Integrated rfc2822's patch merging.
+* Changed the API to be Module-explicit: Spawner.spawn
+* Added run() as alias. Can call as: Spawner.run
+* wait() and alive?() updated to be: Spawner.wait(pid) and Spawner.alive?(pid)
+* Added integration specs in spec/
+* Due to the total change in how you would call Spawner, I'm making this v2.0.0
