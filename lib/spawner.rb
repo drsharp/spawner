@@ -17,7 +17,7 @@ module Spawner
   # things to close in child process
   @@resources = []
   # in some environments, logger isn't defined
-  @@logger = defined?(RAILS_DEFAULT_LOGGER) ? RAILS_DEFAULT_LOGGER : Logger.new(STDERR)
+  @@logger = defined?(::Rails.logger) ? ::Rails.logger : Logger.new(STDERR)
   # forked children to kill on exit
   @@punks = []
 
