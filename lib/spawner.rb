@@ -200,6 +200,6 @@ module Spawner
 end
 
 
-ActiveRecord::Base.send     :include, Spawner
-ActionController::Base.send :include, Spawner
-ActiveRecord::Observer.send :include, Spawner
+#ActiveRecord::Base.send     :include, Spawner
+#ActionController::Base.send :include, Spawner
+#ActiveRecord::Observer.send :include, Spawner
